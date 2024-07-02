@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+protocol ExchangeRateViewState: ObservableObject {
+  var exchangeRates: [String: Double] { get }
+  var baseCurrencyCode: String { get }
+  var quoteCurrencyCode: String { get }
+}
+
+protocol ExchangeRateViewListner {
+  func loadConversionRates()
+}
+
+typealias ConversionRateViewModel = ExchangeRateViewState & ExchangeRateViewListner
+
 struct ExchangeRateView: View {
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
