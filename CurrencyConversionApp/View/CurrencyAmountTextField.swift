@@ -27,7 +27,6 @@ struct CurrencyAmountTextField: View {
           Image(systemName: "chevron.down")
         }
       }
-      .frame(width: 80)
       Spacer()
       TextField("", value: $amount, format: .number)
         .padding(10)

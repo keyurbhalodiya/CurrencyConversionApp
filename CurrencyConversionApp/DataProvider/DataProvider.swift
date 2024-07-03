@@ -55,12 +55,13 @@ extension DataProvider {
 // MARK: NetworkDataProviding
 
 extension DataProvider {
+  
   var conversionRatesPublisher: AnyPublisher<[String : Double], Never> {
     $conversionRates.eraseToAnyPublisher()
   }
   
-  func loadConversionRate() {
-    NetworkService.shared.getData(baseCurrency: "", type: ExchangeRateInfo.self)
+  func loadConversionRate(for baseCurrency: String) {
+    NetworkService.shared.getData(baseCurrency: baseCurrency, type: ExchangeRateInfo.self)
       .sink { completion in
         switch completion {
         case .failure(let err):

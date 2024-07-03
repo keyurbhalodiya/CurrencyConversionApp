@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CurrencyRowViewModel {
+struct CurrencyRowViewModel: Hashable {
   let baseCurrencyCode: String
   let quoteCurrencyCode: String
   let quoteCurrencyFlag: String

@@ -8,23 +8,103 @@
 import SwiftUI
 
 protocol ExchangeRateViewState: ObservableObject {
+  var rowModel: [CurrencyRowViewModel] { get }
   var exchangeRates: [String: Double] { get }
   var baseCurrencyCode: String { get }
   var quoteCurrencyCode: String { get }
+  var baseCurrencyAmount: Double? { get }
+  var quoteCurrencyAmount: Double? { get }
 }
 
 protocol ExchangeRateViewListner {
   func loadConversionRates()
+  func updateCurrencyAmount(for type: CurrencyType, with amount: Double)
+  func updateCurrencyCode(for type: CurrencyType, with currencyCode: String)
+  func addCurrency(newCurrencyCode: String)
+  func removeCurrency(currencyCode: String)
 }
 
 typealias ConversionRateViewModel = ExchangeRateViewState & ExchangeRateViewListner
 
-struct ExchangeRateView: View {
+struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
+
+  @StateObject private var viewModel: ViewModel
+  @State private var number: Double = 1000
+  
+  public init(viewModel: ViewModel) {
+    self._viewModel = StateObject(wrappedValue: viewModel)
+  }
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+      NavigationView {
+        VStack {
+          Divider()
+            .padding(.bottom)
+          VStack {
+            CurrencyAmountTextField(amount: $number, currencyCode: viewModel.baseCurrencyCode)
+            swappingButton
+            CurrencyAmountTextField(amount: $number, currencyCode: viewModel.quoteCurrencyCode)
+          }
+          .frame(maxWidth: UIScreen.main.bounds.size.width - 32)
+          .background(Color.white)
+          .cornerRadius(15)
+          .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
+          .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
+          .padding(.bottom)
+          
+          List(viewModel.rowModel, id: \.self) { rowModel in
+            SelectedCurrencyRowView(rowModel: rowModel)
+          }
+          .listStyle(.plain)
+        }
+        .navigationTitle("Currency Conveter")
+        .toolbar {
+          Button("Add") {}
+        }
+        .navigationBarTitleDisplayMode(.inline)
+      }
     }
+  
+  
+  @ViewBuilder
+  var swappingButton: some View {
+    Button(action: {
+      print("button pressed")
+      
+    }) {
+      Image(systemName: "rectangle.2.swap")
+    }
+    .frame(width: 30, height: 30)
+  }
 }
 
-#Preview {
-    ExchangeRateView()
+// MARK: Preview
+
+#if DEBUG
+private final class ExchangeRateViewModelMock: ConversionRateViewModel {
+  var rowModel: [CurrencyRowViewModel] = [
+    CurrencyRowViewModel(baseCurrencyCode: "SGD", quoteCurrencyCode: "USD", quoteCurrencyFlag: "USD".countryFlag(), quoteCurrencyName: "USD".currencyName(), amount: 100 * 0.74, rate: 0.74),
+    CurrencyRowViewModel(baseCurrencyCode: "SGD", quoteCurrencyCode: "AED", quoteCurrencyFlag: "AED".countryFlag(), quoteCurrencyName: "AED".currencyName(), amount: 100 * 3.6725, rate: 3.6725),
+    CurrencyRowViewModel(baseCurrencyCode: "SGD", quoteCurrencyCode: "AFN", quoteCurrencyFlag: "AFN".countryFlag(), quoteCurrencyName: "AFN".currencyName(), amount: 100 * 71.0480, rate: 71.0480)
+  ]
+ 
+  var exchangeRates: [String : Double] = ["USD" : 1, "AED" : 3.6725, "AFN" : 71.0480, "ALL" : 93.6300, "AMD" : 388.1220]
+  
+  var baseCurrencyCode: String = "SGD"
+  
+  var quoteCurrencyCode: String = "USD"
+  
+  var baseCurrencyAmount: Double? = 1000
+  
+  var quoteCurrencyAmount: Double? = 736.55
+ 
+  func loadConversionRates() { }
+  func updateCurrencyAmount(for type: CurrencyType, with amount: Double) { }
+  func updateCurrencyCode(for type: CurrencyType, with currencyCode: String) { }
+  func addCurrency(newCurrencyCode: String) { }
+  func removeCurrency(currencyCode: String) { }
 }
+#Preview {
+  ExchangeRateView(viewModel: ExchangeRateViewModelMock())
+}
+
+#endif
