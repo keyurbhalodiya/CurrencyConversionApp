@@ -12,12 +12,13 @@ protocol ExchangeRateViewState: ObservableObject {
   var exchangeRates: [String: Double] { get }
   var baseCurrencyCode: String { get }
   var quoteCurrencyCode: String { get }
-  var baseCurrencyAmount: Double? { get }
-  var quoteCurrencyAmount: Double? { get }
+  var baseCurrencyAmount: Double { get set }
+  var quoteCurrencyAmount: Double { get set }
 }
 
 protocol ExchangeRateViewListner {
   func loadConversionRates()
+  func didTappedSwapping()
   func updateCurrencyAmount(for type: CurrencyType, with amount: Double)
   func updateCurrencyCode(for type: CurrencyType, with currencyCode: String)
   func addCurrency(newCurrencyCode: String)
@@ -40,9 +41,15 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
           Divider()
             .padding(.bottom)
           VStack {
-            CurrencyAmountTextField(amount: $number, currencyCode: viewModel.baseCurrencyCode)
+            CurrencyAmountTextField(amount: $viewModel.baseCurrencyAmount, currencyCode: viewModel.baseCurrencyCode)
+              .onChange(of: viewModel.baseCurrencyAmount) { newValue in
+                viewModel.updateCurrencyAmount(for: .baseCurrency, with: newValue)
+              }
             swappingButton
-            CurrencyAmountTextField(amount: $number, currencyCode: viewModel.quoteCurrencyCode)
+            CurrencyAmountTextField(amount: $viewModel.quoteCurrencyAmount, currencyCode: viewModel.quoteCurrencyCode)
+              .onChange(of: viewModel.quoteCurrencyAmount) { newValue in
+                viewModel.updateCurrencyAmount(for: .quoteCurrncy, with: newValue)
+              }
           }
           .frame(maxWidth: UIScreen.main.bounds.size.width - 32)
           .background(Color.white)
@@ -56,6 +63,9 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
           }
           .listStyle(.plain)
         }
+        .onAppear {
+          viewModel.loadConversionRates()
+        }
         .navigationTitle("Currency Conveter")
         .toolbar {
           Button("Add") {}
@@ -68,8 +78,7 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
   @ViewBuilder
   var swappingButton: some View {
     Button(action: {
-      print("button pressed")
-      
+      viewModel.didTappedSwapping()
     }) {
       Image(systemName: "rectangle.2.swap")
     }
@@ -93,11 +102,12 @@ private final class ExchangeRateViewModelMock: ConversionRateViewModel {
   
   var quoteCurrencyCode: String = "USD"
   
-  var baseCurrencyAmount: Double? = 1000
+  var baseCurrencyAmount: Double = 1000
   
-  var quoteCurrencyAmount: Double? = 736.55
+  var quoteCurrencyAmount: Double = 736.55
  
   func loadConversionRates() { }
+  func didTappedSwapping() { }
   func updateCurrencyAmount(for type: CurrencyType, with amount: Double) { }
   func updateCurrencyCode(for type: CurrencyType, with currencyCode: String) { }
   func addCurrency(newCurrencyCode: String) { }

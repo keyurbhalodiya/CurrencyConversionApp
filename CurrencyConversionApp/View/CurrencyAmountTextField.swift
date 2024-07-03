@@ -28,11 +28,12 @@ struct CurrencyAmountTextField: View {
         }
       }
       Spacer()
-      TextField("", value: $amount, format: .number)
+      TextField("", value: $amount, format: .number .grouping(.automatic) .precision(.fractionLength(2)))
+        .keyboardType(.decimalPad)
         .padding(10)
         .overlay(RoundedRectangle(cornerRadius: 5)
           .stroke(Color.gray)
-        )
+                 )
     }
     .foregroundColor(.black)
     .font(.system(size: 20, weight: .medium, design: .default))

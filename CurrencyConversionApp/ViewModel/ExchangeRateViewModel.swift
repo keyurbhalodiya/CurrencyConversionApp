@@ -32,8 +32,8 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   @Published var exchangeRates: [String: Double] = [:]
   @Published var baseCurrencyCode: String
   @Published var quoteCurrencyCode: String
-  @Published var baseCurrencyAmount: Double?
-  @Published var quoteCurrencyAmount: Double?
+  @Published var baseCurrencyAmount: Double = 1000.0
+  @Published var quoteCurrencyAmount: Double = 1000.0
   @Published var rowModel: [CurrencyRowViewModel] = []
   
   init(dataProvider: DataProviding) {
@@ -50,6 +50,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
       .sink { [weak self] conversionRates in
         guard let self else { return }
         self.exchangeRates = conversionRates
+        self.updateCurrencyAmount(for: .baseCurrency, with: baseCurrencyAmount)
         self.rowModel = conversionRates.keys.compactMap({ key in
           self.generateRowModel(for: key)
         })
@@ -59,11 +60,19 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   
   private func generateRowModel(for country: String) -> CurrencyRowViewModel? {
     guard let rate = exchangeRates[country] else { return nil }
-    return CurrencyRowViewModel(baseCurrencyCode: baseCurrencyCode, quoteCurrencyCode: quoteCurrencyCode, quoteCurrencyFlag: quoteCurrencyCode.countryFlag(), quoteCurrencyName: quoteCurrencyCode.currencyName(), amount: (baseCurrencyAmount ?? 0.0) * rate, rate: rate)
+    return CurrencyRowViewModel(baseCurrencyCode: baseCurrencyCode, quoteCurrencyCode: country, quoteCurrencyFlag: country.countryFlag(), quoteCurrencyName: country.currencyName(), amount: baseCurrencyAmount * rate, rate: rate)
   }
   
   func loadConversionRates() {
     dataProvider.loadConversionRate(for: baseCurrencyCode)
+  }
+  
+  func didTappedSwapping() {
+    let tempBaseCurrencyCode = baseCurrencyCode
+    baseCurrencyCode = quoteCurrencyCode
+    quoteCurrencyCode = tempBaseCurrencyCode
+    baseCurrencyAmount = 1000.0
+    loadConversionRates()
   }
   
   func updateCurrencyAmount(for type: CurrencyType, with amount: Double) {
@@ -85,7 +94,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
       loadConversionRates()
     case .quoteCurrncy:
       quoteCurrencyCode = currencyCode
-      updateCurrencyAmount(for: type, with: baseCurrencyAmount ?? 0.0)
+      updateCurrencyAmount(for: type, with: baseCurrencyAmount)
     }
   }
   
