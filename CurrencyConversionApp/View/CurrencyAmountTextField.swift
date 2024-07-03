@@ -11,16 +11,19 @@ struct CurrencyAmountTextField: View {
   
   @Binding var amount: Double
   private let currencyCode: String
+  private let tapHander: () -> Void
   
-  init(amount: Binding<Double>, currencyCode: String) {
+  init(amount: Binding<Double>, currencyCode: String, tapHander: @escaping () -> Void) {
     self._amount = amount
     self.currencyCode = currencyCode
+    self.tapHander = tapHander
   }
   
   var body: some View {
     HStack() {
       HStack {
         Button(action: {
+          tapHander()
         }) {
           Text("\(currencyCode) " + currencyCode.countryFlag())
             .multilineTextAlignment(.center)
@@ -33,12 +36,12 @@ struct CurrencyAmountTextField: View {
         .padding(10)
         .overlay(RoundedRectangle(cornerRadius: 5)
           .stroke(Color.gray)
-                 )
+        )
     }
     .foregroundColor(.black)
     .font(.system(size: 20, weight: .medium, design: .default))
     .padding()
-
+    
   }
 }
 
@@ -47,9 +50,9 @@ struct CurrencyAmountTextField: View {
 private struct MockView: View {
   
   @State var amount: Double = 10000
-
+  
   var body: some View {
-    CurrencyAmountTextField(amount: $amount, currencyCode: "SGD")
+    CurrencyAmountTextField(amount: $amount, currencyCode: "SGD", tapHander: { })
   }
 }
 

@@ -14,7 +14,7 @@ final class DataProvider: DataProviding {
   
   // MARK: Dependencies
   private let repo: CacheDataProviding
-
+  
   private var cancellables: Set<AnyCancellable> = Set()
   @Published private var conversionRates: [String: Double] = [:]
   

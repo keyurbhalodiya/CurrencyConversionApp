@@ -9,22 +9,22 @@ import Foundation
 import Combine
 
 enum NetworkError: Error {
-    case invalidURL
-    case responseError
-    case unknown
+  case invalidURL
+  case responseError
+  case unknown
 }
 
 extension NetworkError: LocalizedError {
-    var errorDescription: String? {
-        switch self {
-        case .invalidURL:
-            return NSLocalizedString("Invalid URL", comment: "")
-        case .responseError:
-            return NSLocalizedString("Unexpected status code", comment: "")
-        case .unknown:
-            return NSLocalizedString("Unknown error", comment: "")
-        }
+  var errorDescription: String? {
+    switch self {
+    case .invalidURL:
+      return NSLocalizedString("Invalid URL", comment: "")
+    case .responseError:
+      return NSLocalizedString("Unexpected status code", comment: "")
+    case .unknown:
+      return NSLocalizedString("Unknown error", comment: "")
     }
+  }
 }
 
 private enum Constant {
@@ -45,7 +45,7 @@ final class NetworkService {
         return promise(.failure(NetworkError.invalidURL))
       }
       let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-     
+      
       guard let componentsUrl = components?.url else {
         return promise(.failure(NetworkError.invalidURL))
       }

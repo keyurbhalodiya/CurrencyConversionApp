@@ -22,7 +22,7 @@ final class ExchangeRateRepository: CacheDataProviding {
   
   static let shared = ExchangeRateRepository()
   private let userDefault = UserDefaults.standard
-
+  
   init() { }
   
   private func updateCache(shouldAdd: Bool = true, currencyCode: String) {

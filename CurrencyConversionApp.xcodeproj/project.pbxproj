@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		71586CB02C35B1520066DB76 /* CurrencyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71586CAF2C35B1520066DB76 /* CurrencyListView.swift */; };
+		71586CB22C35B3990066DB76 /* CurrencyListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71586CB12C35B3990066DB76 /* CurrencyListViewModel.swift */; };
 		71EEBEB82C3408CE009DA7C8 /* CurrencyConversionAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EEBEB72C3408CE009DA7C8 /* CurrencyConversionAppApp.swift */; };
 		71EEBEBA2C3408CE009DA7C8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71EEBEB92C3408CE009DA7C8 /* ContentView.swift */; };
 		71EEBEBC2C3408CF009DA7C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71EEBEBB2C3408CF009DA7C8 /* Assets.xcassets */; };
@@ -43,6 +45,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		71586CAF2C35B1520066DB76 /* CurrencyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyListView.swift; sourceTree = "<group>"; };
+		71586CB12C35B3990066DB76 /* CurrencyListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyListViewModel.swift; sourceTree = "<group>"; };
 		71EEBEB42C3408CE009DA7C8 /* CurrencyConversionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CurrencyConversionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71EEBEB72C3408CE009DA7C8 /* CurrencyConversionAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyConversionAppApp.swift; sourceTree = "<group>"; };
 		71EEBEB92C3408CE009DA7C8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -182,6 +186,7 @@
 				71EEBEE82C340A09009DA7C8 /* ExchangeRateView.swift */,
 				71EEBEF32C341197009DA7C8 /* CurrencyAmountTextField.swift */,
 				71EEBEF72C3418B8009DA7C8 /* SelectedCurrencyRowView.swift */,
+				71586CAF2C35B1520066DB76 /* CurrencyListView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -190,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				71EEBEEA2C340A15009DA7C8 /* ExchangeRateViewModel.swift */,
+				71586CB12C35B3990066DB76 /* CurrencyListViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -333,12 +339,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				71EEBEED2C340A28009DA7C8 /* DataProvider.swift in Sources */,
+				71586CB22C35B3990066DB76 /* CurrencyListViewModel.swift in Sources */,
 				71EEBEEF2C340AAB009DA7C8 /* ExchangeRateRepository.swift in Sources */,
 				71EEBEF22C340B12009DA7C8 /* NetworkService.swift in Sources */,
 				71EEBEEB2C340A15009DA7C8 /* ExchangeRateViewModel.swift in Sources */,
 				71EEBEE72C34098D009DA7C8 /* Model.swift in Sources */,
 				71EEBEF62C3414E1009DA7C8 /* Extension.swift in Sources */,
 				71EEBEF42C341197009DA7C8 /* CurrencyAmountTextField.swift in Sources */,
+				71586CB02C35B1520066DB76 /* CurrencyListView.swift in Sources */,
 				71EEBEBA2C3408CE009DA7C8 /* ContentView.swift in Sources */,
 				71EEBEB82C3408CE009DA7C8 /* CurrencyConversionAppApp.swift in Sources */,
 				71EEBEF82C3418B8009DA7C8 /* SelectedCurrencyRowView.swift in Sources */,

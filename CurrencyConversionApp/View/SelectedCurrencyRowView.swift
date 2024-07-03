@@ -24,22 +24,22 @@ struct SelectedCurrencyRowView: View {
     self.rowModel = rowModel
   }
   
-    var body: some View {
-      HStack {
-        VStack(alignment: .leading) {
-          Text("\(rowModel.quoteCurrencyCode) \(rowModel.quoteCurrencyFlag)")
-          Text(rowModel.quoteCurrencyName)
-            .font(.system(size: 12, weight: .light, design: .default))
-        }
-        Spacer()
-        VStack(alignment: .trailing) {
-          Text(rowModel.amount, format: .number)
-          Text("1 \(rowModel.baseCurrencyCode) = \(rowModel.rate) \(rowModel.quoteCurrencyCode)")
-            .font(.system(size: 12, weight: .light, design: .default))
-        }
+  var body: some View {
+    HStack {
+      VStack(alignment: .leading) {
+        Text("\(rowModel.quoteCurrencyCode) \(rowModel.quoteCurrencyFlag)")
+        Text(rowModel.quoteCurrencyName)
+          .font(.system(size: 12, weight: .light, design: .default))
       }
-      .padding()
+      Spacer()
+      VStack(alignment: .trailing) {
+        Text(rowModel.amount, format: .number)
+        Text("1 \(rowModel.baseCurrencyCode) = \(rowModel.rate) \(rowModel.quoteCurrencyCode)")
+          .font(.system(size: 12, weight: .light, design: .default))
+      }
     }
+    .padding()
+  }
 }
 
 #Preview {

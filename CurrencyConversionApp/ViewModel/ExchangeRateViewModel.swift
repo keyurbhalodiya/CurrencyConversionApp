@@ -28,13 +28,13 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   private let dataProvider: DataProviding
   
   private var cancellables: Set<AnyCancellable> = Set()
-
-  @Published var exchangeRates: [String: Double] = [:]
-  @Published var baseCurrencyCode: String
-  @Published var quoteCurrencyCode: String
+  
+  private(set) var exchangeRates: [String: Double] = [:]
+  @Published private(set) var baseCurrencyCode: String
+  @Published private(set) var quoteCurrencyCode: String
+  @Published private(set) var rowModel: [CurrencyRowViewModel] = []
   @Published var baseCurrencyAmount: Double = 1000.0
   @Published var quoteCurrencyAmount: Double = 1000.0
-  @Published var rowModel: [CurrencyRowViewModel] = []
   
   init(dataProvider: DataProviding) {
     self.dataProvider = dataProvider
@@ -51,7 +51,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
         guard let self else { return }
         self.exchangeRates = conversionRates
         self.updateCurrencyAmount(for: .baseCurrency, with: baseCurrencyAmount)
-        self.rowModel = conversionRates.keys.compactMap({ key in
+        self.rowModel = dataProvider.cacheCurrencies.compactMap({ key in
           self.generateRowModel(for: key)
         })
       }
@@ -100,7 +100,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   
   func addCurrency(newCurrencyCode: String) {
     guard !rowModel.contains(where: { $0.quoteCurrencyCode == newCurrencyCode }),
-            let model = generateRowModel(for: newCurrencyCode) else { return }
+          let model = generateRowModel(for: newCurrencyCode) else { return }
     rowModel.append(model)
     dataProvider.addCurrency(newCurrencyCode: newCurrencyCode)
   }

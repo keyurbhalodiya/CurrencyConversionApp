@@ -27,53 +27,86 @@ protocol ExchangeRateViewListner {
 
 typealias ConversionRateViewModel = ExchangeRateViewState & ExchangeRateViewListner
 
-struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
+private enum TapActionType {
+  case baseCurrency
+  case quoteCurrency
+  case addNewCurrency
+}
 
+struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
+  // MARK: Dependencies
   @StateObject private var viewModel: ViewModel
+  
   @State private var number: Double = 1000
+  @State private var showModal = false
+  @State private var tapAactionType: TapActionType?
   
   public init(viewModel: ViewModel) {
     self._viewModel = StateObject(wrappedValue: viewModel)
   }
-    var body: some View {
-      NavigationView {
-        VStack {
-          Divider()
-            .padding(.bottom)
-          VStack {
-            CurrencyAmountTextField(amount: $viewModel.baseCurrencyAmount, currencyCode: viewModel.baseCurrencyCode)
-              .onChange(of: viewModel.baseCurrencyAmount) { newValue in
-                viewModel.updateCurrencyAmount(for: .baseCurrency, with: newValue)
-              }
-            swappingButton
-            CurrencyAmountTextField(amount: $viewModel.quoteCurrencyAmount, currencyCode: viewModel.quoteCurrencyCode)
-              .onChange(of: viewModel.quoteCurrencyAmount) { newValue in
-                viewModel.updateCurrencyAmount(for: .quoteCurrncy, with: newValue)
-              }
-          }
-          .frame(maxWidth: UIScreen.main.bounds.size.width - 32)
-          .background(Color.white)
-          .cornerRadius(15)
-          .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
-          .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
+  
+  var body: some View {
+    NavigationView {
+      VStack {
+        Divider()
           .padding(.bottom)
-          
-          List(viewModel.rowModel, id: \.self) { rowModel in
-            SelectedCurrencyRowView(rowModel: rowModel)
+        VStack {
+          CurrencyAmountTextField(amount: $viewModel.baseCurrencyAmount, currencyCode: viewModel.baseCurrencyCode, tapHander: {
+            showModal = true
+            tapAactionType = .baseCurrency
+          })
+            .onChange(of: viewModel.baseCurrencyAmount) { newValue in
+              viewModel.updateCurrencyAmount(for: .baseCurrency, with: newValue)
+            }
+          swappingButton
+          CurrencyAmountTextField(amount: $viewModel.quoteCurrencyAmount, currencyCode: viewModel.quoteCurrencyCode, tapHander: {
+            showModal = true
+            tapAactionType = .quoteCurrency
+          })
+            .onChange(of: viewModel.quoteCurrencyAmount) { newValue in
+              viewModel.updateCurrencyAmount(for: .quoteCurrncy, with: newValue)
+            }
+        }
+        .frame(maxWidth: UIScreen.main.bounds.size.width - 32)
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
+        .padding(.bottom)
+        
+        List(viewModel.rowModel, id: \.self) { rowModel in
+          SelectedCurrencyRowView(rowModel: rowModel)
+        }
+        .listStyle(.plain)
+      }
+      .onAppear {
+        viewModel.loadConversionRates()
+      }
+      .navigationTitle("Currency Conveter")
+      .toolbar {
+        Button("Add Currency") {
+          showModal = true
+          self.tapAactionType = .addNewCurrency
+        }
+      }
+      .navigationBarTitleDisplayMode(.inline)
+      .sheet(isPresented: $showModal) {
+        CurrencyListView(viewModel: CurrencyListViewModel(currencies: viewModel.exchangeRates.map({ $0.key }))) { selectedCurrency in
+          showModal = false
+          switch tapAactionType {
+          case .baseCurrency:
+            viewModel.updateCurrencyCode(for: .baseCurrency, with: selectedCurrency)
+          case .quoteCurrency:
+            viewModel.updateCurrencyCode(for: .quoteCurrncy, with: selectedCurrency)
+          case .addNewCurrency:
+            viewModel.addCurrency(newCurrencyCode: selectedCurrency)
+          default:
+            break
           }
-          .listStyle(.plain)
         }
-        .onAppear {
-          viewModel.loadConversionRates()
-        }
-        .navigationTitle("Currency Conveter")
-        .toolbar {
-          Button("Add") {}
-        }
-        .navigationBarTitleDisplayMode(.inline)
       }
     }
-  
+  }
   
   @ViewBuilder
   var swappingButton: some View {
@@ -95,17 +128,12 @@ private final class ExchangeRateViewModelMock: ConversionRateViewModel {
     CurrencyRowViewModel(baseCurrencyCode: "SGD", quoteCurrencyCode: "AED", quoteCurrencyFlag: "AED".countryFlag(), quoteCurrencyName: "AED".currencyName(), amount: 100 * 3.6725, rate: 3.6725),
     CurrencyRowViewModel(baseCurrencyCode: "SGD", quoteCurrencyCode: "AFN", quoteCurrencyFlag: "AFN".countryFlag(), quoteCurrencyName: "AFN".currencyName(), amount: 100 * 71.0480, rate: 71.0480)
   ]
- 
   var exchangeRates: [String : Double] = ["USD" : 1, "AED" : 3.6725, "AFN" : 71.0480, "ALL" : 93.6300, "AMD" : 388.1220]
-  
   var baseCurrencyCode: String = "SGD"
-  
   var quoteCurrencyCode: String = "USD"
-  
   var baseCurrencyAmount: Double = 1000
-  
   var quoteCurrencyAmount: Double = 736.55
- 
+  
   func loadConversionRates() { }
   func didTappedSwapping() { }
   func updateCurrencyAmount(for type: CurrencyType, with amount: Double) { }
