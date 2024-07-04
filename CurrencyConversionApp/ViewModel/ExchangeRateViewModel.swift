@@ -35,6 +35,12 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   @Published private(set) var rowModel: [CurrencyRowViewModel] = []
   @Published var baseCurrencyAmount: Double = 1000.0
   @Published var quoteCurrencyAmount: Double = 1000.0
+  @Published var isLoading: Bool = false
+
+  var quoteCurrencyRate: String {
+    guard let rate = exchangeRates[quoteCurrencyCode] else { return "" }
+    return "1 \(baseCurrencyCode) = \(String(format: "%.2f", rate)) \(quoteCurrencyCode)"
+  }
   
   init(dataProvider: DataProviding) {
     self.dataProvider = dataProvider
@@ -49,6 +55,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
       .dropFirst()
       .sink { [weak self] conversionRates in
         guard let self else { return }
+        isLoading = false
         self.exchangeRates = conversionRates
         self.updateCurrencyAmount(for: .baseCurrency, with: baseCurrencyAmount)
         self.rowModel = dataProvider.cacheCurrencies.compactMap({ key in
@@ -64,6 +71,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   }
   
   func loadConversionRates() {
+    isLoading = true
     dataProvider.loadConversionRate(for: baseCurrencyCode)
   }
   

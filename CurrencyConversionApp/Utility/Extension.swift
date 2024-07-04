@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension String {
   /// Get country flag
@@ -23,5 +24,13 @@ extension String {
   /// Get currency name
   func currencyName() -> String {
     Locale.current.localizedString(forCurrencyCode: self) ?? self
+  }
+}
+
+extension View {
+  func hudOverlay(_ isShowing: Bool) -> some View {
+    modifier(
+      LoadingIndicatorModifier(isShowing: isShowing)
+    )
   }
 }

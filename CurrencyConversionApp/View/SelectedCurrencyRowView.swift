@@ -28,14 +28,16 @@ struct SelectedCurrencyRowView: View {
     HStack {
       VStack(alignment: .leading) {
         Text("\(rowModel.quoteCurrencyCode) \(rowModel.quoteCurrencyFlag)")
+          .font(.system(size: 18, weight: .medium, design: .default))
         Text(rowModel.quoteCurrencyName)
-          .font(.system(size: 12, weight: .light, design: .default))
+          .font(.system(size: 14, weight: .regular, design: .default))
       }
       Spacer()
       VStack(alignment: .trailing) {
-        Text(rowModel.amount, format: .number)
-        Text("1 \(rowModel.baseCurrencyCode) = \(rowModel.rate) \(rowModel.quoteCurrencyCode)")
-          .font(.system(size: 12, weight: .light, design: .default))
+        Text(String(format: "%.2f", rowModel.amount))
+          .font(.system(size: 18, weight: .medium, design: .default))
+        Text("1 \(rowModel.baseCurrencyCode) = \(String(format: "%.2f", rowModel.rate)) \(rowModel.quoteCurrencyCode)")
+          .font(.system(size: 14, weight: .regular, design: .default))
       }
     }
     .padding()

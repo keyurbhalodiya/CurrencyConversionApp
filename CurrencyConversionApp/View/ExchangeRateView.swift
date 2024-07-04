@@ -12,8 +12,10 @@ protocol ExchangeRateViewState: ObservableObject {
   var exchangeRates: [String: Double] { get }
   var baseCurrencyCode: String { get }
   var quoteCurrencyCode: String { get }
+  var quoteCurrencyRate: String { get }
   var baseCurrencyAmount: Double { get set }
   var quoteCurrencyAmount: Double { get set }
+  var isLoading: Bool { get }
 }
 
 protocol ExchangeRateViewListner {
@@ -40,7 +42,8 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
   @State private var number: Double = 1000
   @State private var showModal = false
   @State private var tapAactionType: TapActionType?
-  
+  @Environment(\.isLoading) private var isLoading
+
   public init(viewModel: ViewModel) {
     self._viewModel = StateObject(wrappedValue: viewModel)
   }
@@ -66,6 +69,7 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
             .onChange(of: viewModel.quoteCurrencyAmount) { newValue in
               viewModel.updateCurrencyAmount(for: .quoteCurrncy, with: newValue)
             }
+          quoteRateInfo
         }
         .frame(maxWidth: UIScreen.main.bounds.size.width - 32)
         .background(Color.white)
@@ -74,8 +78,16 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
         .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
         .padding(.bottom)
         
-        List(viewModel.rowModel, id: \.self) { rowModel in
-          SelectedCurrencyRowView(rowModel: rowModel)
+        List {
+          ForEach(viewModel.rowModel, id: \.self) { rowModel in
+            SelectedCurrencyRowView(rowModel: rowModel)
+          }
+          .onDelete { indexSet in
+            for i in indexSet.makeIterator() {
+              let removeCurrency = viewModel.rowModel[i].quoteCurrencyCode
+              viewModel.removeCurrency(currencyCode: removeCurrency)
+            }
+          }
         }
         .listStyle(.plain)
       }
@@ -84,7 +96,16 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
       }
       .navigationTitle("Currency Conveter")
       .toolbar {
-        Button("Add Currency") {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button(action: {
+            viewModel.loadConversionRates()
+          }) {
+            Image(systemName: "arrow.clockwise")
+          }
+        }
+      }
+      .toolbar {
+        Button("Add") {
           showModal = true
           self.tapAactionType = .addNewCurrency
         }
@@ -106,6 +127,9 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
         }
       }
     }
+    .onChange(of: viewModel.isLoading) { newValue in
+        isLoading.wrappedValue = newValue
+    }
   }
   
   @ViewBuilder
@@ -116,6 +140,18 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
       Image(systemName: "rectangle.2.swap")
     }
     .frame(width: 30, height: 30)
+  }
+  
+  @ViewBuilder
+  var quoteRateInfo: some View {
+    HStack {
+      Text(viewModel.quoteCurrencyRate)
+        .font(.system(size: 16, weight: .semibold))
+        .padding(.bottom)
+        .padding(.leading)
+        .foregroundColor(.gray)
+      Spacer()
+    }
   }
 }
 
@@ -133,7 +169,9 @@ private final class ExchangeRateViewModelMock: ConversionRateViewModel {
   var quoteCurrencyCode: String = "USD"
   var baseCurrencyAmount: Double = 1000
   var quoteCurrencyAmount: Double = 736.55
-  
+  var quoteCurrencyRate: String = "1 SGD = 0.74 USD"
+  var isLoading: Bool = true
+
   func loadConversionRates() { }
   func didTappedSwapping() { }
   func updateCurrencyAmount(for type: CurrencyType, with amount: Double) { }

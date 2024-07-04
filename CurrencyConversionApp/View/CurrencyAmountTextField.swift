@@ -41,7 +41,6 @@ struct CurrencyAmountTextField: View {
     .foregroundColor(.black)
     .font(.system(size: 20, weight: .medium, design: .default))
     .padding()
-    
   }
 }
 
