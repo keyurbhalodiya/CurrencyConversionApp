@@ -12,6 +12,7 @@ struct CurrencyAmountTextField: View {
   @Binding var amount: Double?
   private let currencyCode: String
   private let tapHander: () -> Void
+  @FocusState private var isFocused: Bool
 
   init(amount: Binding<Double?>, currencyCode: String, tapHander: @escaping () -> Void) {
     self._amount = amount
@@ -37,6 +38,19 @@ struct CurrencyAmountTextField: View {
         .overlay(RoundedRectangle(cornerRadius: 5)
           .stroke(Color.gray)
         )
+        .focused($isFocused)
+        .toolbar {
+          if isFocused {
+            ToolbarItemGroup(placement: .keyboard) {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isFocused = false
+                    }) { Text("Done") }
+                }
+            }
+          }
+        }
     }
     .foregroundColor(.black)
     .font(.system(size: 20, weight: .medium, design: .default))
