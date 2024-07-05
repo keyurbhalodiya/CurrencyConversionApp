@@ -13,8 +13,8 @@ protocol ExchangeRateViewState: ObservableObject {
   var baseCurrencyCode: String { get }
   var quoteCurrencyCode: String { get }
   var quoteCurrencyRate: String { get }
-  var baseCurrencyAmount: Double { get set }
-  var quoteCurrencyAmount: Double { get set }
+  var baseCurrencyAmount: Double? { get set }
+  var quoteCurrencyAmount: Double? { get set }
   var isLoading: Bool { get }
 }
 
@@ -58,7 +58,7 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
             showModal = true
             tapAactionType = .baseCurrency
           })
-            .onChange(of: viewModel.baseCurrencyAmount) { newValue in
+          .onChange(of: viewModel.baseCurrencyAmount ?? 0.0) { newValue in
               viewModel.updateCurrencyAmount(for: .baseCurrency, with: newValue)
             }
           swappingButton
@@ -66,7 +66,7 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
             showModal = true
             tapAactionType = .quoteCurrency
           })
-            .onChange(of: viewModel.quoteCurrencyAmount) { newValue in
+          .onChange(of: viewModel.quoteCurrencyAmount ?? 0.0) { newValue in
               viewModel.updateCurrencyAmount(for: .quoteCurrncy, with: newValue)
             }
           quoteRateInfo
@@ -112,23 +112,29 @@ struct ExchangeRateView<ViewModel: ConversionRateViewModel>: View {
       }
       .navigationBarTitleDisplayMode(.inline)
       .sheet(isPresented: $showModal) {
-        CurrencyListView(viewModel: CurrencyListViewModel(currencies: viewModel.exchangeRates.map({ $0.key }))) { selectedCurrency in
-          showModal = false
-          switch tapAactionType {
-          case .baseCurrency:
-            viewModel.updateCurrencyCode(for: .baseCurrency, with: selectedCurrency)
-          case .quoteCurrency:
-            viewModel.updateCurrencyCode(for: .quoteCurrncy, with: selectedCurrency)
-          case .addNewCurrency:
-            viewModel.addCurrency(newCurrencyCode: selectedCurrency)
-          default:
-            break
-          }
-        }
+        presetCurrencyList
       }
     }
     .onChange(of: viewModel.isLoading) { newValue in
         isLoading.wrappedValue = newValue
+    }
+  }
+    
+  
+  @ViewBuilder
+  var presetCurrencyList: some View {
+    CurrencyListView(viewModel: CurrencyListViewModel(currencies: viewModel.exchangeRates.map({ $0.key }))) { selectedCurrency in
+      showModal = false
+      switch tapAactionType {
+      case .baseCurrency:
+        viewModel.updateCurrencyCode(for: .baseCurrency, with: selectedCurrency)
+      case .quoteCurrency:
+        viewModel.updateCurrencyCode(for: .quoteCurrncy, with: selectedCurrency)
+      case .addNewCurrency:
+        viewModel.addCurrency(newCurrencyCode: selectedCurrency)
+      default:
+        break
+      }
     }
   }
   
@@ -167,8 +173,8 @@ private final class ExchangeRateViewModelMock: ConversionRateViewModel {
   var exchangeRates: [String : Double] = ["USD" : 1, "AED" : 3.6725, "AFN" : 71.0480, "ALL" : 93.6300, "AMD" : 388.1220]
   var baseCurrencyCode: String = "SGD"
   var quoteCurrencyCode: String = "USD"
-  var baseCurrencyAmount: Double = 1000
-  var quoteCurrencyAmount: Double = 736.55
+  var baseCurrencyAmount: Double? = 1000
+  var quoteCurrencyAmount: Double? = 736.55
   var quoteCurrencyRate: String = "1 SGD = 0.74 USD"
   var isLoading: Bool = true
 

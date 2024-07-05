@@ -34,7 +34,7 @@ struct SelectedCurrencyRowView: View {
       }
       Spacer()
       VStack(alignment: .trailing) {
-        Text(String(format: "%.2f", rowModel.amount))
+        Text(rowModel.amount, format: .number.grouping(.automatic) .precision(.fractionLength(2)))
           .font(.system(size: 18, weight: .medium, design: .default))
         Text("1 \(rowModel.baseCurrencyCode) = \(String(format: "%.2f", rowModel.rate)) \(rowModel.quoteCurrencyCode)")
           .font(.system(size: 14, weight: .regular, design: .default))

@@ -47,7 +47,7 @@ final class ExchangeRateRepository: CacheDataProviding {
 extension ExchangeRateRepository {
   var cacheCurrencies: [String] {
     guard let cacheData = userDefault.object(forKey: Constant.selectedCurrenciesKey) as? [String] else {
-      return ["SGD"]
+      return ["USD"]
     }
     return cacheData
   }

@@ -33,8 +33,8 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   @Published private(set) var baseCurrencyCode: String
   @Published private(set) var quoteCurrencyCode: String
   @Published private(set) var rowModel: [CurrencyRowViewModel] = []
-  @Published var baseCurrencyAmount: Double = 1000.0
-  @Published var quoteCurrencyAmount: Double = 1000.0
+  @Published var baseCurrencyAmount: Double? = 1000
+  @Published var quoteCurrencyAmount: Double? = 0
   @Published var isLoading: Bool = false
 
   var quoteCurrencyRate: String {
@@ -57,7 +57,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
         guard let self else { return }
         isLoading = false
         self.exchangeRates = conversionRates
-        self.updateCurrencyAmount(for: .baseCurrency, with: baseCurrencyAmount)
+        self.updateCurrencyAmount(for: .baseCurrency, with: baseCurrencyAmount ?? 0.0)
         self.rowModel = dataProvider.cacheCurrencies.compactMap({ key in
           self.generateRowModel(for: key)
         })
@@ -67,7 +67,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
   
   private func generateRowModel(for country: String) -> CurrencyRowViewModel? {
     guard let rate = exchangeRates[country] else { return nil }
-    return CurrencyRowViewModel(baseCurrencyCode: baseCurrencyCode, quoteCurrencyCode: country, quoteCurrencyFlag: country.countryFlag(), quoteCurrencyName: country.currencyName(), amount: baseCurrencyAmount * rate, rate: rate)
+    return CurrencyRowViewModel(baseCurrencyCode: baseCurrencyCode, quoteCurrencyCode: country, quoteCurrencyFlag: country.countryFlag(), quoteCurrencyName: country.currencyName(), amount: (baseCurrencyAmount ?? 0.0) * rate, rate: rate)
   }
   
   func loadConversionRates() {
@@ -79,7 +79,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
     let tempBaseCurrencyCode = baseCurrencyCode
     baseCurrencyCode = quoteCurrencyCode
     quoteCurrencyCode = tempBaseCurrencyCode
-    baseCurrencyAmount = 1000.0
+    baseCurrencyAmount = 1000
     loadConversionRates()
   }
   
@@ -93,6 +93,9 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
       baseCurrencyAmount = amount / value
       quoteCurrencyAmount = amount
     }
+    self.rowModel = dataProvider.cacheCurrencies.compactMap({ key in
+      self.generateRowModel(for: key)
+    })
   }
   
   func updateCurrencyCode(for type: CurrencyType, with currencyCode: String) {
@@ -102,7 +105,7 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
       loadConversionRates()
     case .quoteCurrncy:
       quoteCurrencyCode = currencyCode
-      updateCurrencyAmount(for: type, with: baseCurrencyAmount)
+      updateCurrencyAmount(for: type, with: baseCurrencyAmount ?? 0.0)
     }
   }
   

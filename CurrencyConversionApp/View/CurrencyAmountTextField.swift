@@ -9,11 +9,11 @@ import SwiftUI
 
 struct CurrencyAmountTextField: View {
   
-  @Binding var amount: Double
+  @Binding var amount: Double?
   private let currencyCode: String
   private let tapHander: () -> Void
-  
-  init(amount: Binding<Double>, currencyCode: String, tapHander: @escaping () -> Void) {
+
+  init(amount: Binding<Double?>, currencyCode: String, tapHander: @escaping () -> Void) {
     self._amount = amount
     self.currencyCode = currencyCode
     self.tapHander = tapHander
@@ -31,7 +31,7 @@ struct CurrencyAmountTextField: View {
         }
       }
       Spacer()
-      TextField("", value: $amount, format: .number .grouping(.automatic) .precision(.fractionLength(2)))
+      TextField("", value: $amount, format: .number .grouping(.never) .precision(.fractionLength(2)))
         .keyboardType(.decimalPad)
         .padding(10)
         .overlay(RoundedRectangle(cornerRadius: 5)
@@ -48,7 +48,7 @@ struct CurrencyAmountTextField: View {
 #if DEBUG
 private struct MockView: View {
   
-  @State var amount: Double = 10000
+  @State var amount: Double? = 10000
   
   var body: some View {
     CurrencyAmountTextField(amount: $amount, currencyCode: "SGD", tapHander: { })
