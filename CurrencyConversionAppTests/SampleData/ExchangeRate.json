@@ -1,0 +1,16 @@
+{
+  "result":"success",
+  "documentation":"https://www.exchangerate-api.com/docs",
+  "terms_of_use":"https://www.exchangerate-api.com/terms",
+  "time_last_update_unix":1720051201,
+  "time_last_update_utc":"Thu, 04 Jul 2024 00:00:01 +0000",
+  "time_next_update_unix":1720137601,
+  "time_next_update_utc":"Fri, 05 Jul 2024 00:00:01 +0000",
+  "base_code":"USD",
+  "conversion_rates":{
+    "USD":1,
+    "GBP":0.7907,
+    "JPY":160.9477,
+    "EUR":0.93
+  }
+}
