@@ -9,43 +9,43 @@ import XCTest
 @testable import CurrencyConversionApp
 
 final class CurrencyListViewModelTests: XCTestCase {
-    var viewModel: CurrencyListViewModel!
+  var viewModel: CurrencyListViewModel!
+  
+  override func setUp() {
+    super.setUp()
+    let currencies = ["USD", "EUR", "GBP", "JPY", "INR"]
+    viewModel = CurrencyListViewModel(currencies: currencies)
+  }
+  
+  override func tearDown() {
+    viewModel = nil
+    super.tearDown()
+  }
+  
+  func testInitialValues() {
+    XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR", "GBP", "JPY", "INR"])
+  }
+  
+  func testDidSearchCurrency() {
+    viewModel.didSearchCurrency(with: "U")
+    XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR"])
     
-    override func setUp() {
-        super.setUp()
-        let currencies = ["USD", "EUR", "GBP", "JPY", "INR"]
-        viewModel = CurrencyListViewModel(currencies: currencies)
-    }
+    viewModel.didSearchCurrency(with: "E")
+    XCTAssertEqual(viewModel.filterCurrencies, ["EUR"])
     
-    override func tearDown() {
-        viewModel = nil
-        super.tearDown()
-    }
+    viewModel.didSearchCurrency(with: "J")
+    XCTAssertEqual(viewModel.filterCurrencies, ["JPY"])
     
-    func testInitialValues() {
-        XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR", "GBP", "JPY", "INR"])
-    }
+    viewModel.didSearchCurrency(with: "Z")
+    XCTAssertEqual(viewModel.filterCurrencies, [])
+  }
+  
+  func testDidCancelSearchCurrency() {
+    viewModel.didSearchCurrency(with: "U")
+    XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR"])
     
-    func testDidSearchCurrency() {
-        viewModel.didSearchCurrency(with: "U")
-        XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR"])
-        
-        viewModel.didSearchCurrency(with: "E")
-        XCTAssertEqual(viewModel.filterCurrencies, ["EUR"])
-        
-        viewModel.didSearchCurrency(with: "J")
-        XCTAssertEqual(viewModel.filterCurrencies, ["JPY"])
-        
-        viewModel.didSearchCurrency(with: "Z")
-        XCTAssertEqual(viewModel.filterCurrencies, [])
-    }
-    
-    func testDidCancelSearchCurrency() {
-        viewModel.didSearchCurrency(with: "U")
-        XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR"])
-        
-        viewModel.didCancelSearchCurrency()
-        XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR", "GBP", "JPY", "INR"])
-    }
+    viewModel.didCancelSearchCurrency()
+    XCTAssertEqual(viewModel.filterCurrencies, ["USD", "EUR", "GBP", "JPY", "INR"])
+  }
 }
 
