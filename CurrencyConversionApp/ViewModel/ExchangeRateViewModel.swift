@@ -46,10 +46,10 @@ final class ExchangeRateViewModel: ConversionRateViewModel {
     self.dataProvider = dataProvider
     self.baseCurrencyCode = dataProvider.baseCurrencyCode
     self.quoteCurrencyCode = dataProvider.quoteCurrencyCode
-    subscribeForGitHubUsers()
+    subscribeForConversionRates()
   }
   
-  private func subscribeForGitHubUsers() {
+  private func subscribeForConversionRates() {
     dataProvider.conversionRatesPublisher
       .receive(on: DispatchQueue.main)
       .dropFirst()
