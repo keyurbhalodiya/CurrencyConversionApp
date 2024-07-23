@@ -35,5 +35,10 @@ This app ensures that users have the latest currency conversion rates at their f
 ## Note
 This project doesn't have used any third-party library or cocoa pods.
 
+# Currency Converter
+![Simulator Screenshot - iPhone 15 - 2024-07-23 at 17 39 17](https://github.com/user-attachments/assets/22ebc0d7-38ef-44c4-9870-c5dbe8e03774)
 
+
+# Currency List
+![Simulator Screenshot - iPhone 15 - 2024-07-23 at 17 42 11](https://github.com/user-attachments/assets/f075f290-2ee5-427e-b657-ddbcbc93e555)
 
